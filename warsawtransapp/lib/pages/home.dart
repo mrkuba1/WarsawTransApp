@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:warsawtransapp/widgets/nav_bus_widget.dart';
 import 'package:warsawtransapp/widgets/nav_widget.dart';
+import 'package:warsawtransapp/widgets/search_busstop_widget.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -44,6 +45,20 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
                   child: const BusstopNavWidget(),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 4,
+                  height: 500,
+                  child: BusStopsSearch (),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / (4 / 3),
+                  height: 10,
+                  //puste bo to rzad z wyszukiwarka
                 ),
               ],
             ),
