@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:warsawtransapp/widgets/lines_button_widget.dart';
 import 'package:warsawtransapp/widgets/nav_bus_widget.dart';
 import 'package:warsawtransapp/widgets/nav_widget.dart';
 import 'package:warsawtransapp/widgets/search_busstop_widget.dart';
@@ -67,6 +68,7 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 4,
                   height: MediaQuery.of(context).size.height / (4 / 3),
+                  child: LinesButtonsWidget(items : items),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
