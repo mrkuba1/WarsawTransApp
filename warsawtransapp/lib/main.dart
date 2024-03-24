@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:warsawtransapp/pages/home.dart';
 import 'package:warsawtransapp/utils/colors.dart';
 
-void main() {
+main() {
   runApp(const MyApp());
 }
 

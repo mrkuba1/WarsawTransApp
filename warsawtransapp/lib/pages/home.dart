@@ -1,36 +1,81 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:warsawtransapp/widgets/lines_button_widget.dart';
-import 'package:warsawtransapp/widgets/nav_bus_widget.dart';
+import 'package:flutter/services.dart';
+import 'package:warsawtransapp/data/busstops/models/busstopdata.dart';
+import 'package:warsawtransapp/data/busstops/models/busstopsinfo.dart';
+import 'package:warsawtransapp/data/core/bus_client.dart';
+import 'package:warsawtransapp/data/lines/models/busline.dart';
+import 'package:warsawtransapp/data/lines/models/busstoplines.dart';
+import 'package:warsawtransapp/data/timetables/models/busroute.dart';
+import 'package:warsawtransapp/data/timetables/models/busroutes.dart';
 import 'package:warsawtransapp/widgets/nav_widget.dart';
-import 'package:warsawtransapp/widgets/search_busstop_widget.dart';
+import 'package:warsawtransapp/widgets/search_widget.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({Key? key}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final List<String> items = [
-    "P",
-    "A",
-    "B",
-    "C",
-    "D",
-    "A",
-    "B",
-    "C",
-    "D",
-    "A",
-    "B",
-    "C",
-    "D",
-    "A",
-    "B",
-    "C",
-    "D"
-  ];
+  final BusClient _busClient = BusClient();
+  late BusstopsInfo downloadBusstopsinfo = BusstopsInfo(busstopsinfo: []);
+  String name = 'Please select your busstop';
+  BusstopInfo? selectedBusStop;
+  BusstopLines? busstopLines;
+  List<BusLine> selectedLines = [];
+  List<BusRoute> busroutes = [];
+  List<Busroutes> busRoutesList = [];
+
+  Future<void> fetchBusstopsInfo() async {
+    print("POBIERAM DANE");
+    try {
+      //BusstopsInfo busstopsInfos = await _busClient.getBusstopsInfo();
+      final String contents =
+          await rootBundle.loadString('assets/all_busstops_info.json');
+      final jsonData = json.decode(contents);
+      BusstopsInfo busstopsInfos = BusstopsInfo.fromMap(jsonData);
+
+      setState(() {
+        downloadBusstopsinfo = busstopsInfos;
+      });
+    } catch (e) {
+      // Obsługa błędu
+      print("Wystąpił błąd podczas pobierania danych o przystankach : $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBusstopsInfo();
+  }
+
+  // Metoda do pobierania danych dla przystanku autobusowego
+  Future<void> fetchBusstopLines(BusstopInfo busStopInfo) async {
+    try {
+      // Pobieranie danych
+      BusstopLines lines = await _busClient.getBusstopLines(
+        busStopInfo.id,
+        busStopInfo.smallid,
+      );
+      // Aktualizacja stanu
+      setState(() {
+        busroutes = [];
+        selectedBusStop = busStopInfo;
+        name = ("${busStopInfo.name} ${busStopInfo.id} ${busStopInfo.smallid}");
+        busstopLines = lines;
+        busroutes = [];
+        busRoutesList = [];
+      });
+    } catch (e) {
+      // Obsługa błędu
+      print("Wystąpił błąd podczas pobierania danych: $e");
+    }
+    print(busstopLines);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,16 +90,26 @@ class _HomeState extends State<Home> {
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
-                  child: const BusstopNavWidget(),
-                ),
+                )
               ],
             ),
             Row(
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 4,
-                  height: 500,
-                  child: BusStopsSearch (),
+                  height: 100,
+                  // child: BusStopsSearch(
+                  //   busstopsInfo: downloadBusstopsinfo,
+                  // ),
+                  child: SearchWithSuggestionsWidget(
+                    busstopsInfo: downloadBusstopsinfo,
+                    onSuggestionSelectedCallback: (selectedBusStop) {
+                      setState(() {});
+                      fetchBusstopLines(selectedBusStop);
+                      // Tutaj możesz wykonać dowolne działania na wybranym przystanku
+                      print('Selected bus stop: ${selectedBusStop.name}');
+                    },
+                  ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
@@ -68,14 +123,13 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 4,
                   height: MediaQuery.of(context).size.height / (4 / 3),
-                  child: LinesButtonsWidget(items : items),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
                   height: MediaQuery.of(context).size.height / (4 / 3),
-                ),
+                )
               ],
-            )
+            ),
           ],
         ),
       ),
