@@ -1,17 +1,19 @@
 import 'dart:convert';
+import 'package:busapp/data/busstops/models/busstopdata.dart';
+import 'package:busapp/data/busstops/models/busstopsinfo.dart';
+import 'package:busapp/data/core/bus_client.dart';
+import 'package:busapp/data/lines/models/busline.dart';
+import 'package:busapp/data/lines/models/busstoplines.dart';
+import 'package:busapp/data/timetables/models/busroute.dart';
+import 'package:busapp/data/timetables/models/busroutes.dart';
+import 'package:busapp/presentation/widgets/bus_timetable_widget.dart';
+import 'package:busapp/presentation/widgets/lines_button_widget.dart';
+import 'package:busapp/presentation/widgets/nav_bus_widget.dart';
+import 'package:busapp/presentation/widgets/nav_widget.dart';
+import 'package:busapp/presentation/widgets/save_widget.dart';
+import 'package:busapp/presentation/widgets/search_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:warsawtransapp/data/busstops/models/busstopdata.dart';
-import 'package:warsawtransapp/data/busstops/models/busstopsinfo.dart';
-import 'package:warsawtransapp/data/core/bus_client.dart';
-import 'package:warsawtransapp/data/lines/models/busline.dart';
-import 'package:warsawtransapp/data/lines/models/busstoplines.dart';
-import 'package:warsawtransapp/data/timetables/models/busroute.dart';
-import 'package:warsawtransapp/data/timetables/models/busroutes.dart';
-import 'package:warsawtransapp/widgets/nav_widget.dart';
-import 'package:warsawtransapp/widgets/search_widget.dart';
-
-import '../widgets/lines_button_widget.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -47,36 +49,7 @@ class _HomeState extends State<Home> {
       print("Wystąpił błąd podczas pobierania danych o przystankach : $e");
     }
   }
-  List<BusRoute> mergeBusRoute(List<Busroutes> busRoutesList) {
-    List<BusRoute> selectedBusRoute = [];
-    for (int i = 0; i < busRoutesList.length; i++) {
-      for (int j = 0; j < busRoutesList[i].routes.length; j++) {
-        busRoutesList[i].routes[j].setBusLine(busRoutesList[i].line as BusLine);
-        selectedBusRoute.add(busRoutesList[i].routes[j]);
-      }
-    }
-    BusRoute.sortBusRoutesByTime(selectedBusRoute);
-    return selectedBusRoute;
-  }
-  Future<void> fetchBusroutes(List<BusLine> lines) async {
-    print(lines);
-    try {
-      for (int i = 0; i < lines.length; i++) {
-        Busroutes busRoutes = await _busClient.getBusRoutes(
-            selectedBusStop!.id, selectedBusStop!.smallid, lines[i].value);
 
-        busRoutes.setBusLine(lines[i]);
-        busRoutesList.add(busRoutes);
-      }
-    } catch (e) {
-      print("Wystąpił błąd podczas pobierania danych: $e");
-    }
-    setState(() {
-      busroutes = mergeBusRoute(busRoutesList);
-    });
-    busRoutesList = [];
-    // print(busroutes);
-  }
   @override
   void initState() {
     super.initState();
@@ -107,6 +80,38 @@ class _HomeState extends State<Home> {
     print(busstopLines);
   }
 
+  Future<void> fetchBusroutes(List<BusLine> lines) async {
+    print(lines);
+    try {
+      for (int i = 0; i < lines.length; i++) {
+        Busroutes busRoutes = await _busClient.getBusRoutes(
+            selectedBusStop!.id, selectedBusStop!.smallid, lines[i].value);
+
+        busRoutes.setBusLine(lines[i]);
+        busRoutesList.add(busRoutes);
+      }
+    } catch (e) {
+      print("Wystąpił błąd podczas pobierania danych: $e");
+    }
+    setState(() {
+      busroutes = mergeBusRoute(busRoutesList);
+    });
+    busRoutesList = [];
+    // print(busroutes);
+  }
+
+  List<BusRoute> mergeBusRoute(List<Busroutes> busRoutesList) {
+    List<BusRoute> selectedBusRoute = [];
+    for (int i = 0; i < busRoutesList.length; i++) {
+      for (int j = 0; j < busRoutesList[i].routes.length; j++) {
+        busRoutesList[i].routes[j].setBusLine(busRoutesList[i].line as BusLine);
+        selectedBusRoute.add(busRoutesList[i].routes[j]);
+      }
+    }
+    BusRoute.sortBusRoutesByTime(selectedBusRoute);
+    return selectedBusRoute;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,6 +126,7 @@ class _HomeState extends State<Home> {
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
+                  child: BusstopNavWidget(name: name),
                 )
               ],
             ),
@@ -156,15 +162,42 @@ class _HomeState extends State<Home> {
                   height: MediaQuery.of(context).size.height / (4 / 3),
                   child: busstopLines != null && busstopLines!.lines.isNotEmpty
                       ? LinesButtonsWidget(
-                      items: busstopLines!.lines,
-                      onLinesSelected: fetchBusroutes)
+                          items: busstopLines!.lines,
+                          onLinesSelected: fetchBusroutes)
                       : const SizedBox(), // Jeśli nie ma linii autobusowych, nie wyświetlaj widgetu
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
                   height: MediaQuery.of(context).size.height / (4 / 3),
-
+                  child: busroutes.isNotEmpty
+                      ? BusTimeTableWidget(items: busroutes)
+                      : const SizedBox(), // Jeśli nie ma linii autobusowych, nie wyświetlaj widgetu
                 )
+              ],
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 4,
+                  height: 100,
+                  child: SaveList(
+                    selectedLines: selectedLines,
+                    busStop: selectedBusStop ??
+                        BusstopInfo(
+                            id: '',
+                            name: '',
+                            smallid: '',
+                            latitude: '',
+                            streetid: '',
+                            alitude: '',
+                            destionation: ''),
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / (4 / 3),
+                  height: 10,
+                  //puste bo to rzad z wyszukiwarka
+                ),
               ],
             ),
           ],
