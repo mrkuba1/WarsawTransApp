@@ -5,7 +5,7 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:warsawtransapp/utils/colors.dart';
 
 class BusstopNavWidget extends StatefulWidget {
-  const BusstopNavWidget({super.key});
+  const BusstopNavWidget({super.key, required String name});
 
   @override
   _BusstopNavWidgetState createState() => _BusstopNavWidgetState();

@@ -1,5 +1,5 @@
-import 'package:busapp/data/timetables/models/busroute.dart';
 import 'package:flutter/material.dart';
+import 'package:warsawtransapp/data/timetables/models/busroute.dart';
 
 class BusTimeTableWidget extends StatelessWidget {
   final List<BusRoute> items;
