@@ -8,6 +8,8 @@ import 'package:warsawtransapp/data/lines/models/busline.dart';
 import 'package:warsawtransapp/data/lines/models/busstoplines.dart';
 import 'package:warsawtransapp/data/timetables/models/busroute.dart';
 import 'package:warsawtransapp/data/timetables/models/busroutes.dart';
+import 'package:warsawtransapp/models/favbusinfo.dart';
+import 'package:warsawtransapp/utils/colors.dart';
 import 'package:warsawtransapp/widgets/bus_timetable_widget.dart';
 import 'package:warsawtransapp/widgets/lines_button_widget.dart';
 import 'package:warsawtransapp/widgets/nav_bus_widget.dart';
@@ -30,6 +32,8 @@ class _HomeState extends State<Home> {
   List<BusLine> selectedLines = [];
   List<BusRoute> busroutes = [];
   List<Busroutes> busRoutesList = [];
+  List<BusstopInfo> _data = [];
+  List<FavBusInfo> _favbusinfos = [];
 
   Future<void> fetchBusstopsInfo() async {
     print("POBIERAM DANE");
@@ -134,15 +138,11 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 4,
                   height: 100,
-                  // child: BusStopsSearch(
-                  //   busstopsInfo: downloadBusstopsinfo,
-                  // ),
                   child: SearchWithSuggestionsWidget(
                     busstopsInfo: downloadBusstopsinfo,
                     onSuggestionSelectedCallback: (selectedBusStop) {
                       setState(() {});
                       fetchBusstopLines(selectedBusStop);
-                      // Tutaj możesz wykonać dowolne działania na wybranym przystanku
                       print('Selected bus stop: ${selectedBusStop.name}');
                     },
                   ),
@@ -158,7 +158,7 @@ class _HomeState extends State<Home> {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 4,
-                  height: MediaQuery.of(context).size.height / (4 / 3),
+                  height: MediaQuery.of(context).size.height / 3,
                   child: busstopLines != null && busstopLines!.lines.isNotEmpty
                       ? LinesButtonsWidget(
                           items: busstopLines!.lines,
@@ -167,7 +167,7 @@ class _HomeState extends State<Home> {
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
-                  height: MediaQuery.of(context).size.height / (4 / 3),
+                  height: MediaQuery.of(context).size.height / 3,
                   child: busroutes.isNotEmpty
                       ? BusTimeTableWidget(items: busroutes)
                       : const SizedBox(), // Jeśli nie ma linii autobusowych, nie wyświetlaj widgetu
@@ -178,19 +178,35 @@ class _HomeState extends State<Home> {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 4,
-                  height: 100,
-                  // child: SaveList(
-                  //   selectedLines: selectedLines,
-                  //   busStop: selectedBusStop ??
-                  //       BusstopInfo(
-                  //           id: '',
-                  //           name: '',
-                  //           smallid: '',
-                  //           latitude: '',
-                  //           streetid: '',
-                  //           alitude: '',
-                  //           destionation: ''),
-                  // ),
+                  height: 300,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          width: 200,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _addSelectedBusStop(selectedBusStop!);
+                            },
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<OutlinedBorder>(
+                                const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius
+                                      .zero, // Brak zaokrąglenia rogów
+                                ),
+                              ),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                AppColors.secondary,
+                              ),
+                            ),
+                            child: const Text(
+                              "Save busstop",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        _buildDataList(),
+                      ]),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
@@ -203,5 +219,46 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  void _addSelectedBusStop(BusstopInfo selectedBusStop) {
+    setState(() {
+      _data.add(selectedBusStop); // Dodawanie nazwy przystanku
+      //  _favbusinfos.add(FavBusInfo(busstopInfo: selectedBusStop,busLines: busstopLines?.lines));
+    });
+  }
+
+  Widget _buildDataList() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: _data.length,
+        itemBuilder: (context, index) {
+          return Dismissible(
+            key: UniqueKey(),
+            onDismissed: (direction) {
+              setState(() {
+                _data.removeAt(index);
+              });
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Element usunięty'),
+              ));
+            },
+            child: ListTile(
+              onTap: () {
+                _onSelectedBusStopFromList(_data[index]);
+              },
+              title: Text(_data[index].name), // Wyświetlanie nazwy przystanku
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _onSelectedBusStopFromList(BusstopInfo selectedBusStop) {
+    setState(() {
+      this.selectedBusStop = selectedBusStop;
+    });
+    fetchBusstopLines(selectedBusStop);
   }
 }

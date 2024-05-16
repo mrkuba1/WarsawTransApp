@@ -66,4 +66,8 @@ class _SearchWithSuggestionsWidgetState
       ),
     );
   }
+
+  void _onSuggestionSelected(BusstopInfo selectedBusStop) {
+    widget.onSuggestionSelectedCallback(selectedBusStop);
+  }
 }

@@ -1,38 +1,36 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:warsawtransapp/utils/colors.dart';
 
 class BusstopNavWidget extends StatefulWidget {
-  const BusstopNavWidget({super.key, required String name});
+  final String name;
+  const BusstopNavWidget({Key? key, required this.name}) : super(key: key);
 
   @override
   _BusstopNavWidgetState createState() => _BusstopNavWidgetState();
 }
 
 class _BusstopNavWidgetState extends State<BusstopNavWidget> {
-  String get busstopName => "Metro Politechnika 01";
-
   @override
   Widget build(BuildContext context) {
     return ScreenTypeLayout(
-      desktop: busstopNavWidgetNavBar(),
+      desktop: busstopNavWidgetNavBar(widget.name),
       mobile: mobileNavBar(),
     );
   }
 
   Widget mobileNavBar() {
     return Container(
-        margin: EdgeInsets.symmetric(horizontal: 20),
-        height: 70,
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [],
-        ));
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      height: 70,
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [],
+      ),
+    );
   }
 
-  Widget busstopNavWidgetNavBar() {
+  Widget busstopNavWidgetNavBar(String name) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 0),
       height: 100,
@@ -40,7 +38,7 @@ class _BusstopNavWidgetState extends State<BusstopNavWidget> {
         color: AppColors.primary,
         child: Center(
           child: Text(
-            busstopName,
+            name,
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.black,
