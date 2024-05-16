@@ -29,6 +29,12 @@ class BusTimeTableWidget extends StatelessWidget {
         ),
         DataColumn(
           label: Text(
+            'Kierunek',
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+        ),
+        DataColumn(
+          label: Text(
             'Pozostało',
             style: TextStyle(fontStyle: FontStyle.italic),
           ),
@@ -91,6 +97,7 @@ class BusTimeTableWidget extends StatelessWidget {
           cells: <DataCell>[
             DataCell(Text(route.line!.value)),
             DataCell(Text(route.formatTime(route.time.toString()))),
+            DataCell(Text(route.destination)),
             DataCell(Text(timeDifference)),
           ],
         );
