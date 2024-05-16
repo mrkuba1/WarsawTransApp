@@ -45,7 +45,7 @@ class BusTimeTableWidget extends StatelessWidget {
 
         // Pobieramy aktualną godzinę
         DateTime now = DateTime.now();
-        String timeDifference ='';
+        String timeDifference ='-';
 
         // Tworzymy obiekt DateTime z godziną odjazdu
         DateTime departureDateTime = DateTime(
@@ -64,20 +64,24 @@ class BusTimeTableWidget extends StatelessWidget {
 
 
 
-
+        print('dif $difference');
+        print('now $now');
+        print('depart $departureDateTime');
 
         if (hours > 0) {
 
           timeDifference =
-          '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString()
-              .padLeft(2, '0')}';
+          '$hours:${minutes.toString().padLeft(2, '0')}';
         }
-         if(hours == 0 ){
+         else if(hours == 0 ){
            if(minutes < 0){
              timeDifference = 'odjechał ${-1*minutes} minut temu';
            }
+           else{
+             timeDifference = '$hours:${minutes.toString().padLeft(2, '0')}';
+           }
          }
-          else{
+          else if(hours < 0){
           hours += 24;
           if (minutes < 0) {
             minutes += 60;

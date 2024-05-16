@@ -109,13 +109,13 @@ class BusRoute {
     for(int route =0; route < busRoutes.length;route++){
       DateTime departureDateTime = DateTime(
           now.year, now.month, now.day, busRoutes[route].time.hour, busRoutes[route].time.minute);
-      print('odjazd ${busRoutes[route].time.hour}');
-      print('teraz ${now.hour}');
+      // print('odjazd ${busRoutes[route].time.hour}');
+      // print('teraz ${now.hour}');
 
       Duration difference = departureDateTime.difference(now);
-      print('dif $difference');
-      print('min $min_difference');
-      print('zerotime $zero_time');
+      // print('dif $difference');
+      // print('min $min_difference');
+      // print('zerotime $zero_time');
       if(difference < min_difference && !difference.isNegative){
         min_difference = difference;
 
