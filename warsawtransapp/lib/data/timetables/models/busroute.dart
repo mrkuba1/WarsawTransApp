@@ -11,9 +11,9 @@ class BusRoute {
 
   BusRoute(
       {required this.team,
-        required this.destination,
-        required this.route,
-        required this.time});
+      required this.destination,
+      required this.route,
+      required this.time});
 
   BusRoute copyWith({
     String? team,
@@ -69,9 +69,9 @@ class BusRoute {
   @override
   int get hashCode {
     return team.hashCode ^
-    destination.hashCode ^
-    route.hashCode ^
-    time.hashCode;
+        destination.hashCode ^
+        route.hashCode ^
+        time.hashCode;
   }
 
   static DateTime parseTime(String timeString) {
@@ -132,8 +132,4 @@ class BusRoute {
     }
     return busRoutes_sorted;
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 083300baeb55d78f630aac477978b8a108f22af6

@@ -180,38 +180,48 @@ class _HomeState extends State<Home> {
                   width: MediaQuery.of(context).size.width / 4,
                   height: 300,
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          width: 200,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _addSelectedBusStop(selectedBusStop!);
-                            },
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all<OutlinedBorder>(
-                                const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius
-                                      .zero, // Brak zaokrąglenia rogów
-                                ),
-                              ),
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                AppColors.secondary,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 300,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _addSelectedBusStop(selectedBusStop!);
+                          },
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
                               ),
                             ),
-                            child: const Text(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              AppColors.secondary,
+                            ),
+                          ),
+                          child: const Padding(
+                            padding:
+                                EdgeInsets.all(8.0), // Add padding/margins here
+                            child: Text(
                               "Save busstop",
-                              style: TextStyle(color: Colors.white),
+                              textAlign: TextAlign.left,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16),
                             ),
                           ),
                         ),
-                        _buildDataList(),
-                      ]),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      _buildDataList(),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / (4 / 3),
                   height: 10,
-                  //puste bo to rzad z wyszukiwarka
+                  // Empty because it's a row with a search bar
                 ),
               ],
             ),
