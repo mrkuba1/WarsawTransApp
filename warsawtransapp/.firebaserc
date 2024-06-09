@@ -1,0 +1,10 @@
+{
+  "projects": {
+    "default": "fir-demo-project",
+    "no": "fir-demo-project",
+    "aplikacja": "warsawtransapp-94c8f"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
