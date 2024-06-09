@@ -12,7 +12,7 @@ class NavWidget extends StatelessWidget {
       height: 100,
       child: const Center(
         child: Text(
-          "Dynamiczna informacja pasażerska",
+          "Dynamiczna informacja pasażerska cos jeszcze",
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.black,
