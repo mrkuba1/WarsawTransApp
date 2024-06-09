@@ -100,36 +100,48 @@ class BusRoute {
     this.line = line;
   }
 
+  // static List<BusRoute> sortBusRoutesByTime(List<BusRoute> busRoutes) {
+  //   final now = DateTime.now();
+
+  //   Duration min_difference = Duration(hours: 5);
+  //   int zero_time = 0;
+  //   final List<BusRoute> busRoutes_sorted = [];
+  //   // print("asdasdasdasda");
+  //   // print(busRoutes);
+
+  //   for (int route = 0; route < busRoutes.length; route++) {
+  //     DateTime departureDateTime = DateTime(now.year, now.month, now.day,
+  //         busRoutes[route].time.hour, busRoutes[route].time.minute);
+  //     // print('odjazd ${busRoutes[route].time.hour}');
+  //     // print('teraz ${now.hour}');
+
+  //     Duration difference = departureDateTime.difference(now);
+  //     // print('dif $difference');
+  //     // print('min $min_difference');
+  //     // print('zerotime $zero_time');
+  //     // print(busRoutes[route].line);
+  //     if (difference < min_difference && !difference.isNegative) {
+  //       min_difference = difference;
+  //       zero_time = route;
+  //     }
+  //     //  print("zero time= ${zero_time} ${busRoutes[route]}");
+  //   }
+
+  //   for (int route = zero_time; route < busRoutes.length; route++) {
+  //     print("zero time= ${zero_time} ${busRoutes[route]}");
+  //     busRoutes_sorted.add(busRoutes[route]);
+  //   }
+  //   for (int route = 0; route < zero_time; route++) {
+  //     print("zero time= ${zero_time} ${busRoutes[route]}");
+  //     busRoutes_sorted.add(busRoutes[route]);
+  //   }
+  //   return busRoutes_sorted;
+  // }
   static List<BusRoute> sortBusRoutesByTime(List<BusRoute> busRoutes) {
-    final now = DateTime.now();
-
-    Duration min_difference = Duration(hours: 5);
-    int zero_time = 0;
-    final List<BusRoute> busRoutes_sorted = [];
-
-    for (int route = 0; route < busRoutes.length; route++) {
-      DateTime departureDateTime = DateTime(now.year, now.month, now.day,
-          busRoutes[route].time.hour, busRoutes[route].time.minute);
-      // print('odjazd ${busRoutes[route].time.hour}');
-      // print('teraz ${now.hour}');
-
-      Duration difference = departureDateTime.difference(now);
-      // print('dif $difference');
-      // print('min $min_difference');
-      // print('zerotime $zero_time');
-      if (difference < min_difference && !difference.isNegative) {
-        min_difference = difference;
-
-        zero_time = route;
-      }
-    }
-
-    for (int route = zero_time; route < busRoutes.length; route++) {
-      busRoutes_sorted.add(busRoutes[route]);
-    }
-    for (int route = 0; route < zero_time; route++) {
-      busRoutes_sorted.add(busRoutes[route]);
-    }
-    return busRoutes_sorted;
+    DateTime now = DateTime.now();
+    List<BusRoute> futureRoutes =
+        busRoutes.where((busRoute) => busRoute.time.isAfter(now)).toList();
+    futureRoutes.sort((a, b) => a.time.compareTo(b.time));
+    return futureRoutes;
   }
 }

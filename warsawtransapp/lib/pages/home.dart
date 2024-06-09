@@ -100,7 +100,7 @@ class _HomeState extends State<Home> {
       busroutes = mergeBusRoute(busRoutesList);
     });
     busRoutesList = [];
-    // print(busroutes);
+    print(busroutes);
   }
 
   List<BusRoute> mergeBusRoute(List<Busroutes> busRoutesList) {
@@ -143,7 +143,7 @@ class _HomeState extends State<Home> {
                     onSuggestionSelectedCallback: (selectedBusStop) {
                       setState(() {});
                       fetchBusstopLines(selectedBusStop);
-                      print('Selected bus stop: ${selectedBusStop.name}');
+                      print('Selected bus stop: ${selectedBusStop.toString()}');
                     },
                   ),
                 ),
